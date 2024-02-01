@@ -13,6 +13,7 @@ var UseiToSweiMultiplier = big.NewInt(1_000_000_000_000)
 
 var MiddleManAddressPrefix = []byte("evm_middleman")
 var CoinbaseAddressPrefix = []byte("evm_coinbase")
+var WeiTmpEscrowPrefix = []byte("evm_weiescrow")
 
 func GetMiddleManAddress(ctx sdk.Context) sdk.AccAddress {
 	txIndexBz := make([]byte, 8)
@@ -24,6 +25,12 @@ func GetCoinbaseAddress(ctx sdk.Context) sdk.AccAddress {
 	txIndexBz := make([]byte, 8)
 	binary.BigEndian.PutUint64(txIndexBz, uint64(ctx.TxIndex()))
 	return sdk.AccAddress(append(CoinbaseAddressPrefix, txIndexBz...))
+}
+
+func GetTempWeiEscrowAddress(ctx sdk.Context) sdk.AccAddress {
+	txIndexBz := make([]byte, 8)
+	binary.BigEndian.PutUint64(txIndexBz, uint64(ctx.TxIndex()))
+	return sdk.AccAddress(append(WeiTmpEscrowPrefix, txIndexBz...))
 }
 
 func SplitUseiWeiAmount(amt *big.Int) (usei *big.Int, wei *big.Int) {

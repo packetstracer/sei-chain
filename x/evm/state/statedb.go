@@ -27,6 +27,8 @@ type DBImpl struct {
 	// no single bottleneck for fee collection. Its account state and balance will be deleted
 	// before the block commits
 	coinbaseAddress sdk.AccAddress
+	// a temporary address that will serve as the Wei escrow account for this specific transaction.
+	weiEscrowAddress sdk.AccAddress
 
 	k          EVMKeeper
 	simulation bool
@@ -39,6 +41,7 @@ func NewDBImpl(ctx sdk.Context, k EVMKeeper, simulation bool) *DBImpl {
 		snapshottedCtxs:  []sdk.Context{},
 		middleManAddress: GetMiddleManAddress(ctx),
 		coinbaseAddress:  GetCoinbaseAddress(ctx),
+		weiEscrowAddress: GetTempWeiEscrowAddress(ctx),
 		simulation:       simulation,
 	}
 	s.Snapshot() // take an initial snapshot for GetCommitted
@@ -100,6 +103,7 @@ func (s *DBImpl) Copy() vm.StateDB {
 		k:                s.k,
 		middleManAddress: s.middleManAddress,
 		coinbaseAddress:  s.coinbaseAddress,
+		weiEscrowAddress: s.weiEscrowAddress,
 		simulation:       s.simulation,
 		err:              s.err,
 	}

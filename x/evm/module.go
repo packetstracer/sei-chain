@@ -167,6 +167,7 @@ func (am AppModule) BeginBlock(sdk.Context, abci.RequestBeginBlock) {
 // returns no validator updates.
 func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	evmTxDeferredInfoList := am.keeper.GetEVMTxDeferredInfo(ctx)
+	am.keeper.SettleWeiEscrowAccounts(ctx, evmTxDeferredInfoList)
 	denom := am.keeper.GetBaseDenom(ctx)
 	for _, deferredInfo := range evmTxDeferredInfoList {
 		idx := deferredInfo.TxIndx
